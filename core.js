@@ -10,22 +10,22 @@
   const LIMITS = Object.freeze({ enemies: 150, bullets: 180, hostileBullets: 200, gems: 220, pickups: 20, effects: 260, events: 64, hazards: 12 });
   const BALANCE = Object.freeze({ duration: 360, deadline: 480, speed: 240, hp: 100, damage: 18, fireRate: 2.8, dashSpeed: 900, dashTime: .18, dashCooldown: 2.4, hurtInvulnerability: .75 });
   const UPGRADES = [
-    { id: 'power', name: '炽热弹芯', tag: 'POWER', description: '弹丸伤害 +22%', maxLevel: 5 },
-    { id: 'haste', name: '高速循环', tag: 'TEMPO', description: '射击速度 +16%', maxLevel: 5 },
-    { id: 'multishot', name: '散射贯穿', tag: 'SPLIT', description: '三发扇形弹幕，每发贯穿 1 敌；再次升级变为五发', maxLevel: 2 },
-    { id: 'pierce', name: '贯穿协议', tag: 'PIERCE', description: '弹丸额外贯穿 1 个敌人', maxLevel: 3 },
-    { id: 'chain', name: '连锁闪电', tag: 'CHAIN', description: '命中后跳跃 3 个目标；每次升级再增加 1 次跳跃', maxLevel: 3 },
-    { id: 'nova', name: '引力爆裂', tag: 'NOVA', description: '击杀爆炸并产生 0.6 秒引力涡流，牵引敌人与经验', maxLevel: 3 },
-    { id: 'frost', name: '冷却脉冲', tag: 'SLOW', description: '命中使目标减速，强化减速效果', maxLevel: 3 },
-    { id: 'speed', name: '轻量推进', tag: 'MOVE', description: '移动速度 +9%', maxLevel: 3 },
+    { id: 'power', name: '伤害强化', tag: 'POWER', description: '基础伤害 +22%', maxLevel: 5 },
+    { id: 'haste', name: '快速射击', tag: 'TEMPO', description: '射速 +16%', maxLevel: 5 },
+    { id: 'multishot', name: '散射', tag: 'SPLIT', description: '扇形射出 3 发子弹，每发额外穿透 1 个敌人；升级后变为 5 发', maxLevel: 2 },
+    { id: 'pierce', name: '穿透弹', tag: 'PIERCE', description: '子弹额外穿透 1 个敌人', maxLevel: 3 },
+    { id: 'chain', name: '连锁闪电', tag: 'CHAIN', description: '子弹命中后，电弧最多攻击 3 个额外敌人；升级后增加 1 个', maxLevel: 3 },
+    { id: 'nova', name: '爆炸漩涡', tag: 'NOVA', description: '击杀引发爆炸和 0.6 秒漩涡，吸引敌人和经验，首领除外；升级增强爆炸和吸力', maxLevel: 3 },
+    { id: 'frost', name: '减速', tag: 'SLOW', description: '命中后减速 1.2 秒，每级减速 15%', maxLevel: 3 },
+    { id: 'speed', name: '移动加速', tag: 'MOVE', description: '移动速度 +9%', maxLevel: 3 },
     { id: 'vitality', name: '备用电池', tag: 'VITAL', description: '生命上限 +25，并恢复 25 生命', maxLevel: 4 },
-    { id: 'magnet', name: '引力线圈', tag: 'PULL', description: '经验吸附范围 +45', maxLevel: 3 },
-    { id: 'siphon', name: '生命回收', tag: 'SIPHON', description: '每击杀 20 个敌人恢复 4 生命', maxLevel: 3 },
-    { id: 'dash', name: '闪烁引擎', tag: 'DASH', description: '冲刺冷却 -15%，冲撞伤害 +25', maxLevel: 3 },
-    { id: 'orbit', name: '环绕刀刃', tag: 'ORBIT', description: '三枚环绕刀刃持续切割；每次升级增加一枚', maxLevel: 3 },
-    { id: 'regen', name: '自愈回路', tag: 'REPAIR', description: '每秒恢复 0.35 生命', maxLevel: 3 },
-    { id: 'crit', name: '过载火花', tag: 'CRIT', description: '暴击概率 +10%，造成双倍伤害', maxLevel: 4 },
-    { id: 'armor', name: '复合装甲', tag: 'GUARD', description: '受到伤害降低 10%', maxLevel: 3 }
+    { id: 'magnet', name: '经验磁铁', tag: 'PULL', description: '经验吸取范围 +45', maxLevel: 3 },
+    { id: 'siphon', name: '击杀回血', tag: 'SIPHON', description: '每击败 20 个敌人恢复生命，每级恢复 4 点', maxLevel: 3 },
+    { id: 'dash', name: '冲刺强化', tag: 'DASH', description: '冲刺冷却 -15%，撞击伤害 +25', maxLevel: 3 },
+    { id: 'orbit', name: '环刃', tag: 'ORBIT', description: '3 枚刀刃环绕自身，伤害碰到的敌人；升级增加 1 枚', maxLevel: 3 },
+    { id: 'regen', name: '生命恢复', tag: 'REPAIR', description: '每秒恢复 0.35 生命', maxLevel: 3 },
+    { id: 'crit', name: '暴击', tag: 'CRIT', description: '子弹暴击率 +10 个百分点，暴击伤害为 2 倍', maxLevel: 4 },
+    { id: 'armor', name: '护甲', tag: 'GUARD', description: '每级减伤 10%', maxLevel: 3 }
   ].map(Object.freeze);
   const ENEMY = {
     drone: { r: 13, hp: 26, speed: 76, damage: 12, xp: 4, color: '#ff795b' },
@@ -101,7 +101,7 @@
         enemies:[],bullets:[],hostileBullets:[],gems:[],pickups:[],effects:[],events:[],choices:[],upgrades:{},hazards:[],
         obstacles:arenaObstacles(),
         kills:0,dashKills:0,highestChain:0,combo:0,maxCombo:0,comboTimer:0,score:0,boss:null,bossSpawned:false,eliteIndex:0,
-        shake:0,hitStop:0,heavyCooldown:0,eventText:'第一波 · 冲刺撞击可直接击破无人机',eventTimer:5,spawnTimer:.55,hazardTimer:10,fireTimer:0,pendingLevels:0,upgradeSelections:0,buildName:'基础回路',endReason:''
+        shake:0,hitStop:0,heavyCooldown:0,eventText:'第 1 波 · 冲刺可以撞伤敌人',eventTimer:5,spawnTimer:.55,hazardTimer:10,fireTimer:0,pendingLevels:0,upgradeSelections:0,buildName:'基础射击',endReason:''
       };
     }
     function start() {
@@ -136,7 +136,7 @@
       state.shake=Math.max(state.shake,8);state.combo=0;state.comboTimer=0;
       effect('text',p.x,p.y-28,{text:'−'+Math.ceil(damage),color:'#ff8176',life:.65});
       burst(p.x,p.y,'#ff8176',9);emit('hurt');
-      if(p.hp<=0) finish('dead','回路熄灭');
+      if(p.hp<=0) finish('dead','生命耗尽');
       return true;
     }
     function separateFromObstacles(entity) {
@@ -223,11 +223,11 @@
         if(['tank','elite','boss'].includes(e.type))heavyImpact(e.x,e.y);
         if(e.type==='elite') {
           if(state.pickups.length<LIMITS.pickups)state.pickups.push({x:e.x,y:e.y,r:11,type:'health',value:35});
-          notice('精英已击破 · 拾取能量核心',3);state.shake=Math.max(state.shake,6);
+          notice('精英已击败 · 拾取补给恢复生命',3);state.shake=Math.max(state.shake,6);
         } else if(e.type!=='boss' && random()<.035 && state.pickups.length<LIMITS.pickups)state.pickups.push({x:e.x,y:e.y,r:9,type:'health',value:18});
         const siphon=state.player.stats.siphon;
         if(siphon&&state.kills%20===0)heal(4*siphon);
-        if(e.type==='boss'){finish('won','回路重燃 · 核心已净化');continue;}
+        if(e.type==='boss'){finish('won','熔断核心已击败');continue;}
         const nova=state.player.stats.explosion;
         if(nova) {
           const radius=65+nova*20;
@@ -262,7 +262,7 @@
       state.mode='upgrade';state.choices=[];
       for(let i=0;i<3&&available.length;i++) {
         const index=early?0:Math.floor(random()*available.length),u=available.splice(index,1)[0],level=state.upgrades[u.id]||0;
-        const details={chain:level?'增加 1 次跳跃，总计 '+(3+level)+' 个额外目标':'命中后连锁跳跃 3 个额外目标',multishot:level?'扇形弹幕增加至 5 发，每发贯穿 1 敌':'三发扇形弹幕，每发贯穿 1 个额外目标',orbit:level?'环绕刀刃增加至 '+(3+level)+' 枚':'生成 3 枚环绕刀刃，近身持续切割'};
+        const details={chain:level?'电弧最多攻击 '+(3+level)+' 个额外敌人':'子弹命中后，电弧最多攻击 3 个额外敌人',multishot:level?'扇形射出 5 发子弹，保留穿透效果':'扇形射出 3 发子弹，每发额外穿透 1 个敌人',orbit:level?'环刃增加至 '+(3+level)+' 枚':'3 枚刀刃环绕自身，伤害碰到的敌人'};
         state.choices.push(Object.assign({},u,{level,description:details[u.id]||u.description}));
       }
       emit('level');
@@ -282,7 +282,7 @@
       s.armor=.1*n('armor');s.crit=.05+.1*n('crit');s.orbit=n('orbit')?2+n('orbit'):0;s.siphon=n('siphon');
       s.dashCooldown=BALANCE.dashCooldown*(1-.15*n('dash'));
       p.stats=s;p.speed=BALANCE.speed*(1+.09*n('speed'));p.maxHp=BALANCE.hp+25*n('vitality');
-      state.buildName=[n('chain')?'连锁闪电':'',n('multishot')?'散射贯穿':'',n('orbit')?'环绕刀刃':'',n('nova')?'引力爆裂':''].filter(Boolean).join(' · ')||'基础回路';
+      state.buildName=[n('chain')?'连锁闪电':'',n('multishot')?'散射':'',n('orbit')?'环刃':'',n('nova')?'爆炸漩涡':''].filter(Boolean).join(' · ')||'基础射击';
     }
     function chooseUpgrade(index) {
       if(state.mode!=='upgrade'||!Number.isInteger(index)||!state.choices[index])return false;
@@ -291,14 +291,14 @@
       state.upgrades[u.id]=(state.upgrades[u.id]||0)+1;state.upgradeSelections++;recomputeStats();
       if(u.id==='vitality')heal(25);
       state.pendingLevels=Math.max(0,state.pendingLevels-1);state.choices=[];state.mode='playing';dashHeld=false;
-      emit('select');notice(u.name+' · 回路已升级',2);return true;
+      emit('select');notice(u.name+' · 已升级',2);return true;
     }
     function advanceSpawning(dt) {
       while(state.eliteIndex<3&&state.time>=90*(state.eliteIndex+1)) {
-        state.eliteIndex++;spawnAtEdge('elite',590);emit('elite');notice('精英信号 · 保持机动',4);
+        state.eliteIndex++;spawnAtEdge('elite',590);emit('elite');notice('精英出现',4);
       }
       if(state.time>=BALANCE.duration&&!state.bossSpawned) {
-        state.bossSpawned=true;spawnAtEdge('boss',590);emit('elite');notice('焚核守卫已苏醒 · 摧毁核心',5);state.shake=9;
+        state.bossSpawned=true;spawnAtEdge('boss',590);emit('elite');notice('首领出现：熔断核心',5);state.shake=9;
       }
       if(state.wavePhase==='recovery')return;
       state.spawnTimer-=dt;
@@ -318,9 +318,9 @@
       const wave=1+Math.floor((state.time+1e-8)/30),elapsed=(state.time+1e-8)%30,phase=elapsed<23?'assault':'recovery';
       if(wave!==state.wave||phase!==state.wavePhase) {
         if(phase==='recovery') {
-          notice('休整 7 秒 · 回收附近能量，准备下一波',3);
+          notice('休整 7 秒 · 收集经验',3);
           for(const gem of state.gems)if(distance(gem,state.player)<420)gem.pulling=true;
-        } else notice('第 '+wave+' 波 · 新一轮突袭',2.5);
+        } else notice('第 '+wave+' 波 · 进攻',2.5);
       }
       state.wave=wave;state.wavePhase=phase;state.waveRemaining=Math.max(0,(phase==='assault'?23:30)-elapsed);
     }
@@ -534,7 +534,7 @@
       fire(dt,input);updateBullets(dt);updateOrbit(dt);processDeaths();
       if(state.mode!=='playing')return;
       collect(dt);
-      if(state.time>=BALANCE.deadline){finish('dead','回路过载 · 未能及时净化核心');return;}
+      if(state.time>=BALANCE.deadline){finish('dead','超时 · 未能击败核心');return;}
       if(state.pendingLevels>0)showUpgrade();
     }
     reset();

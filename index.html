@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0a1519">
-  <meta name="description" content="余烬回路：六分钟，构筑你的连锁反应。原创、离线可玩的轻量 2D 肉鸽生存游戏。">
+  <meta name="description" content="余烬回路，一款自动射击生存游戏。拾取经验升级，在时限内击败核心。">
   <title>余烬回路 · EMBER CIRCUIT</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
@@ -12,50 +12,50 @@
 </head>
 <body>
   <main id="gameShell">
-    <canvas id="arena" tabindex="0" aria-label="余烬回路战场。使用 WASD 或方向键移动，空格闪避，P 暂停。"></canvas>
+    <canvas id="arena" tabindex="0" aria-label="余烬回路战场。使用 WASD 或方向键移动，空格冲刺，P 暂停。"></canvas>
     <div class="grain" aria-hidden="true"></div>
     <header class="masthead">
       <a class="brand" href="index.html" aria-label="余烬回路首页"><span class="brand-mark">E<span>↗</span></span><span>余烬回路<small>EMBER CIRCUIT</small></span></a>
-      <div class="header-actions"><span class="prototype">反馈重构 <i>02</i></span><button id="feedbackButton" class="icon-button" title="震屏与操作震动设置">⚙<span class="desktop-label"> 反馈设置</span></button><button id="motionButton" class="icon-button" aria-pressed="false" title="减少动态：关闭震屏和重击停顿">◉<span class="desktop-label"> 减少动态</span></button><button id="soundButton" class="icon-button" aria-pressed="false" title="切换合成音效">♪<span class="desktop-label"> 音效关</span></button><button id="pauseButton" class="icon-button" hidden>Ⅱ <span class="desktop-label">暂停</span></button></div>
+      <div class="header-actions"><span class="prototype">版本 <i>0.2</i></span><button id="feedbackButton" class="icon-button" title="屏幕与设备震动设置">⚙<span class="desktop-label"> 震动设置</span></button><button id="motionButton" class="icon-button" aria-pressed="false" title="减少动态：关闭震屏和重击停顿">◉<span class="desktop-label"> 减少动态</span></button><button id="soundButton" class="icon-button" aria-pressed="false" title="开关音效">♪<span class="desktop-label"> 音效关</span></button><button id="pauseButton" class="icon-button" hidden>Ⅱ <span class="desktop-label">暂停</span></button></div>
     </header>
     <section id="hud" class="hud" hidden aria-label="战斗状态">
-      <div class="health-panel"><div class="eyebrow">生命回路 <strong id="hpText">100 / 100</strong></div><div class="bar health"><i id="hpFill"></i></div><div class="level-line"><span id="levelText">LV. 01</span><div class="bar xp"><i id="xpFill"></i></div></div></div>
-      <div class="clock-panel"><span id="phaseText">第 1 波 · 进攻</span><strong id="clockText">00:00 <small>/ 06:00</small></strong><div class="timeline"><i id="timeFill"></i><b></b><b></b><b></b></div><small id="waveHint" class="wave-hint">下一波奖励即将到来</small></div>
-      <div class="kill-panel"><span class="eyebrow">清除信号</span><strong id="killText">000</strong><span id="comboText">开始连锁</span></div>
+      <div class="health-panel"><div class="eyebrow">生命 <strong id="hpText">100 / 100</strong></div><div class="bar health"><i id="hpFill"></i></div><div class="level-line"><span id="levelText">LV. 01</span><div class="bar xp"><i id="xpFill"></i></div></div></div>
+      <div class="clock-panel"><span id="phaseText">第 1 波 · 进攻</span><strong id="clockText">00:00 <small>/ 06:00</small></strong><div class="timeline"><i id="timeFill"></i><b></b><b></b><b></b></div><small id="waveHint" class="wave-hint">拾取经验升级</small></div>
+      <div class="kill-panel"><span class="eyebrow">击败敌人</span><strong id="killText">000</strong><span id="comboText">拾取经验升级</span></div>
     </section>
-    <div id="bossHud" class="boss-hud" hidden><span>最终核心 · 熔断守卫</span><div class="bar boss"><i id="bossFill"></i></div></div>
+    <div id="bossHud" class="boss-hud" hidden><span>首领 · 熔断核心</span><div class="bar boss"><i id="bossFill"></i></div></div>
     <div id="announcement" class="announcement" role="status"></div>
-    <div id="buildHud" class="build-hud" hidden><span id="buildName" class="eyebrow">当前构筑</span><div id="buildChips"></div></div>
-    <div id="dashHud" class="dash-hud" hidden><span class="keycap">SPACE</span><div><strong id="dashText">冲撞就绪</strong><small>撞穿杂兵 · 短暂无敌</small></div><div class="dash-track"><i id="dashFill"></i></div></div>
+    <div id="buildHud" class="build-hud" hidden><span id="buildName" class="eyebrow">当前升级</span><div id="buildChips"></div></div>
+    <div id="dashHud" class="dash-hud" hidden><span class="keycap">SPACE</span><div><strong id="dashText">冲刺就绪</strong><small>撞伤敌人 · 短暂无敌</small></div><div class="dash-track"><i id="dashFill"></i></div></div>
     <section id="menuOverlay" class="overlay menu-overlay" aria-labelledby="gameTitle">
       <div class="menu-layout">
         <div class="intro">
-          <div class="kicker"><span class="live-dot"></span> FEEL THE IMPACT / 回路重燃 · V2</div>
+          <div class="kicker"><span class="live-dot"></span> 生存模式</div>
           <h1 id="gameTitle">余烬<span>回路<span class="title-dot">.</span></span></h1>
           <div class="english-title">EMBER CIRCUIT</div>
-          <p class="tagline">冲进怪潮。<br>让每次命中，都有回响。</p>
-          <p class="intro-copy">冲撞清群，接上电弧、散射或环刃。每波留一口喘息。<br class="desktop-only">选择战场，六分钟后直面熔断核心。</p>
-          <div class="arena-choices" role="group" aria-label="选择战场"><button id="arenaConduit" class="arena-card selected" aria-pressed="true" data-arena="conduit"><span>01 / 磁暴回廊</span><small>疏落导柱 · 躲开横贯战场的电击线</small></button><button id="arenaFoundry" class="arena-card" aria-pressed="false" data-arena="foundry"><span>02 / 熔炉深井</span><small>狭窄炉阵 · 预警后喷发的高温地面</small></button></div>
-          <button id="startButton" class="primary-button">点燃回路 <span>开始一局 ↗</span></button>
-          <div class="session-meta"><span>◷ 约 6–8 分钟</span><span>两个战场均可直接玩</span><span>本地保存挑战进度</span></div>
+          <p class="tagline">撑过怪潮。<br>击败核心。</p>
+          <p class="intro-copy">核心在第 6 分钟出现，限时 2 分钟击败。<br class="desktop-only">拾取经验升级，生命耗尽则本局结束。</p>
+          <div class="arena-choices" role="group" aria-label="选择战场"><button id="arenaConduit" class="arena-card selected" aria-pressed="true" data-arena="conduit"><span>01 / 磁暴回廊</span><small>障碍较少，注意横贯战场的电击</small></button><button id="arenaFoundry" class="arena-card" aria-pressed="false" data-arena="foundry"><span>02 / 熔炉深井</span><small>障碍密集，地面会预警后喷火</small></button></div>
+          <button id="startButton" class="primary-button">开始游戏 <span>↗</span></button>
+          <div class="session-meta"><span>◷ 约 6–8 分钟</span><span>单人</span><span>自动射击</span></div>
         </div>
         <aside class="field-notes">
-          <span class="eyebrow">FIELD GUIDE / 生存指引</span>
-          <div class="guide-row"><span class="guide-number">01</span><div><strong>保持移动</strong><p>WASD / 方向键 · 手机左侧摇杆</p></div><span class="guide-glyph">✣</span></div>
-          <div class="guide-row"><span class="guide-number">02</span><div><strong>从包围中穿过去</strong><p>空格 / 右键 · 手机右侧闪避</p></div><span class="guide-glyph">↗</span></div>
-          <div class="guide-row"><span class="guide-number">03</span><div><strong>让力量产生反应</strong><p>自动瞄准 · 升级三选一叠加构筑</p></div><span class="guide-glyph">⌁</span></div>
-          <div class="field-note">第一张升级就选打法 <span>电弧 / 散射 / 环刃</span><p>不是只加一个数字，是换一种清场方式。</p></div>
-          <div class="challenge-section"><span class="eyebrow">再点一把火 / 挑战解锁</span><div id="menuChallenges"></div><label class="trail-label" for="trailSelect">冲刺余迹<select id="trailSelect" aria-label="选择已解锁的冲刺余迹"></select></label><p class="hint">无需连续登录 · 不花钱 · 只保存在本机</p></div>
+          <span class="eyebrow">操作说明</span>
+          <div class="guide-row"><span class="guide-number">01</span><div><strong>移动</strong><p>WASD / 方向键 · 手机左侧摇杆</p></div><span class="guide-glyph">✣</span></div>
+          <div class="guide-row"><span class="guide-number">02</span><div><strong>冲刺</strong><p>空格 / 右键 · 手机右侧冲刺</p></div><span class="guide-glyph">↗</span></div>
+          <div class="guide-row"><span class="guide-number">03</span><div><strong>射击</strong><p>自动射击 · 按住鼠标左键手动瞄准</p></div><span class="guide-glyph">⌁</span></div>
+          <div class="field-note">升级 <span>电弧 / 散射 / 环刃</span><p>拾取经验，每次升级选择一项。</p></div>
+          <div class="challenge-section"><span class="eyebrow">挑战</span><div id="menuChallenges"></div><label class="trail-label" for="trailSelect">冲刺拖尾<select id="trailSelect" aria-label="选择已解锁的冲刺拖尾"></select></label><p class="hint">挑战进度保存在当前浏览器。</p></div>
         </aside>
       </div>
-      <footer class="menu-footer"><span>离线可玩 / 零付费项目</span><span>PROTOTYPE 0.2 <i>◆</i> 这次，试出你喜欢的打法</span></footer>
+      <footer class="menu-footer"><span>P / Esc 暂停</span><span>v0.2 <i>◆</i></span></footer>
     </section>
-    <section id="upgradeOverlay" class="overlay modal-overlay" hidden aria-labelledby="upgradeTitle"><div class="upgrade-panel"><span class="kicker">CIRCUIT EVOLUTION / 回路进化</span><h2 id="upgradeTitle">再强一点<span>.</span></h2><p class="modal-subtitle">战斗已暂停。选择一项升级，让下一轮更猛烈。</p><div id="upgradeCards" class="upgrade-cards"></div><p class="hint">按 1 / 2 / 3 选择 · 同类升级可以叠加</p></div></section>
-    <section id="pauseOverlay" class="overlay modal-overlay" hidden aria-labelledby="pauseTitle"><div class="compact-panel"><span class="kicker">SIGNAL HELD / 信号保持</span><h2 id="pauseTitle">稍作冷却<span>.</span></h2><p>回路已暂停，喘口气再继续。</p><button id="resumeButton" class="primary-button">继续战斗 <span>P / ESC ↗</span></button><button id="pauseRestartButton" class="text-button">重新点火</button><p class="hint">按住鼠标左键可辅助瞄准 · 松开恢复自动瞄准</p></div></section>
-    <section id="resultOverlay" class="overlay modal-overlay" hidden aria-labelledby="resultTitle"><div class="result-panel"><span id="resultKicker" class="kicker">RUN COMPLETE</span><h2 id="resultTitle">余烬未熄<span>.</span></h2><p id="resultDescription"></p><div class="result-stats"><div><span>存活时间</span><strong id="resultTime">00:00</strong></div><div><span>清除信号</span><strong id="resultKills">0</strong></div><div><span>最高连击</span><strong id="resultCombo">0</strong></div></div><div id="resultBuild" class="result-build"></div><div id="resultChallenge" class="result-challenge"></div><button id="restartButton" class="primary-button">再点一把火 <span>重试本战场 ↗</span></button><button id="menuButton" class="text-button">换一个战场 / 查看解锁</button></div></section>
-    <section id="feedbackOverlay" class="overlay modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="feedbackTitle"><div class="compact-panel feedback-panel"><span class="kicker">IMPACT CONTROL / 反馈强度</span><h2 id="feedbackTitle">让反馈刚刚好<span>.</span></h2><label for="shakeSelect">屏幕震动<select id="shakeSelect"><option value="0">关闭</option><option value="0.45">低</option><option value="1">标准</option></select></label><p id="motionHint" class="hint"></p><label class="haptic-label" for="hapticToggle"><span>操作震动 <small>冲刺、重击和受伤时的短触觉反馈</small></span><input id="hapticToggle" type="checkbox"></label><p id="hapticHint" class="hint"></p><p class="hint">画面与声音始终提供反馈；触觉仅在支持的设备上可选。战斗设置期间已暂停。</p><button id="feedbackClose" class="primary-button">保存并返回 <span>ESC ↗</span></button></div></section>
-    <div id="touchControls" class="touch-controls" hidden><div id="joystick" class="joystick" role="group" aria-label="触控移动摇杆"><span id="joystickKnob"></span><small>移动</small></div><button id="dashButton" class="touch-dash" aria-label="闪避"><span>↗</span><small>闪避</small></button></div>
-    <div id="fatalError" class="fatal-error" hidden role="alert">游戏载入失败，请完整解压后重新打开 index.html。</div>
+    <section id="upgradeOverlay" class="overlay modal-overlay" hidden aria-labelledby="upgradeTitle"><div class="upgrade-panel"><span class="kicker">升级</span><h2 id="upgradeTitle">选择升级<span>.</span></h2><p class="modal-subtitle">选一项后继续游戏。</p><div id="upgradeCards" class="upgrade-cards"></div><p class="hint">按 1 / 2 / 3 选择</p></div></section>
+    <section id="pauseOverlay" class="overlay modal-overlay" hidden aria-labelledby="pauseTitle"><div class="compact-panel"><span class="kicker">暂停</span><h2 id="pauseTitle">已暂停<span>.</span></h2><p>按 P 或 Esc 继续。</p><button id="resumeButton" class="primary-button">继续游戏 <span>P / ESC ↗</span></button><button id="pauseRestartButton" class="text-button">重新开始</button><p class="hint">按住鼠标左键手动瞄准，松开恢复自动瞄准。</p></div></section>
+    <section id="resultOverlay" class="overlay modal-overlay" hidden aria-labelledby="resultTitle"><div class="result-panel"><span id="resultKicker" class="kicker">结算</span><h2 id="resultTitle">本局结束<span>.</span></h2><p id="resultDescription"></p><div class="result-stats"><div><span>存活时间</span><strong id="resultTime">00:00</strong></div><div><span>击败敌人</span><strong id="resultKills">0</strong></div><div><span>最高连杀</span><strong id="resultCombo">0</strong></div></div><div id="resultBuild" class="result-build"></div><div id="resultChallenge" class="result-challenge"></div><button id="restartButton" class="primary-button">再来一局 <span>↗</span></button><button id="menuButton" class="text-button">返回菜单</button></div></section>
+    <section id="feedbackOverlay" class="overlay modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="feedbackTitle"><div class="compact-panel feedback-panel"><span class="kicker">设置</span><h2 id="feedbackTitle">震动设置<span>.</span></h2><label for="shakeSelect">屏幕震动<select id="shakeSelect"><option value="0">关闭</option><option value="0.45">低</option><option value="1">标准</option></select></label><p id="motionHint" class="hint"></p><label class="haptic-label" for="hapticToggle"><span>操作震动 <small>冲刺、重击或受伤时震动</small></span><input id="hapticToggle" type="checkbox"></label><p id="hapticHint" class="hint"></p><p class="hint">战斗中打开设置会暂停游戏。</p><button id="feedbackClose" class="primary-button">完成 <span>ESC ↗</span></button></div></section>
+    <div id="touchControls" class="touch-controls" hidden><div id="joystick" class="joystick" role="group" aria-label="触控移动摇杆"><span id="joystickKnob"></span><small>移动</small></div><button id="dashButton" class="touch-dash" aria-label="冲刺"><span>↗</span><small>冲刺</small></button></div>
+    <div id="fatalError" class="fatal-error" hidden role="alert">游戏加载失败，请刷新重试。</div>
   </main>
   <script src="core.js"></script>
   <script src="progression.js"></script>

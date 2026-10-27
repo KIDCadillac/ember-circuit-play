@@ -62,7 +62,7 @@
   $('pauseButton').addEventListener('click',pause);$('resumeButton').addEventListener('click',pause);
   function setAudioButton(){ $('soundButton').setAttribute('aria-pressed',String(audioEnabled));$('soundButton').innerHTML=`♪<span class="desktop-label"> 音效${audioEnabled?'开':'关'}</span>`;}
   $('soundButton').addEventListener('click',()=>{audioEnabled=!audioEnabled;saveSetting('ember-audio',audioEnabled?'1':'0');unlockAudio();setAudioButton();if(audioEnabled)tone('select');});setAudioButton();
-  function setMotionButton(){document.body.classList.toggle('reduce-motion',reducedMotion);$('motionButton').setAttribute('aria-pressed',String(reducedMotion));$('motionButton').title=reducedMotion?'减少动态已开启：震屏和重击停顿关闭':'减少动态已关闭';$('motionHint').textContent=reducedMotion?'减少动态已开启，当前不震屏、不产生重击停顿。顶部 ◉ 可切换。':'只震动战场，生命与操作界面保持稳定。';}
+  function setMotionButton(){document.body.classList.toggle('reduce-motion',reducedMotion);$('motionButton').setAttribute('aria-pressed',String(reducedMotion));$('motionButton').title=reducedMotion?'减少动态已开启：震屏和重击停顿关闭':'减少动态已关闭';$('motionHint').textContent=reducedMotion?'已开启“减少动态”，屏幕震动和重击停顿已关闭。':'屏幕震动只影响战场画面。';}
   $('motionButton').addEventListener('click',()=>{reducedMotion=!reducedMotion;if(reducedMotion){hitStopRemaining=0;game.state.hitStop=0;}saveSetting('ember-motion',reducedMotion?'1':'0');setMotionButton();});setMotionButton();
   function pick(index){
     if(game.state.mode!=='upgrade'||performance.now()<choiceReady)return;
@@ -123,7 +123,7 @@
   $('dashButton').addEventListener('click',e=>{if(e.detail===0&&game.state.mode==='playing'){dashQueued=true;unlockAudio();}});
   document.body.classList.toggle('is-touch',touchMode);
   for(const id of ['upgradeOverlay','pauseOverlay','resultOverlay']){$(id).setAttribute('role','dialog');$(id).setAttribute('aria-modal','true');}
-  $('feedbackButton').addEventListener('click',()=>{feedbackResume=game.state.mode==='playing';if(feedbackResume)game.togglePause();feedbackOpen=true;clearInput();$('shakeSelect').value=String(shakeLevel);$('hapticToggle').checked=hapticEnabled;$('hapticToggle').disabled=!hapticSupported;$('hapticHint').textContent=hapticSupported?'浏览器提供触觉接口；是否实际震动仍取决于设备、系统与静音设置。':'此浏览器未提供触觉接口，画面和音效仍然生效。';syncUI();$('shakeSelect').focus({preventScroll:true});});
+  $('feedbackButton').addEventListener('click',()=>{feedbackResume=game.state.mode==='playing';if(feedbackResume)game.togglePause();feedbackOpen=true;clearInput();$('shakeSelect').value=String(shakeLevel);$('hapticToggle').checked=hapticEnabled;$('hapticToggle').disabled=!hapticSupported;$('hapticHint').textContent=hapticSupported?'震动效果取决于设备和系统设置。':'当前浏览器不支持操作震动。';syncUI();$('shakeSelect').focus({preventScroll:true});});
   $('shakeSelect').addEventListener('change',()=>{shakeLevel=Number($('shakeSelect').value);saveSetting('ember-shake-v2',String(shakeLevel));});
   $('hapticToggle').addEventListener('change',()=>{hapticEnabled=hapticSupported&&$('hapticToggle').checked;saveSetting('ember-haptic-v2',hapticEnabled?'1':'0');if(hapticEnabled)pulseHaptic('dash');else if(hapticSupported){try{navigator.vibrate(0);}catch{/* Optional hardware feedback may be unavailable. */}}});
   $('feedbackClose').addEventListener('click',closeFeedback);
@@ -131,7 +131,7 @@
   function pulseHaptic(event){if(!hapticSupported||!hapticEnabled||performance.now()-lastHaptic<120)return;const ms=event==='hurt'?24:event==='dash'?14:event==='heavy'?9:0;if(!ms)return;lastHaptic=performance.now();try{navigator.vibrate(ms);}catch{}}
   function renderProgress(){
     progress=progressStore?.read()||progress;const holder=$('menuChallenges');holder.replaceChildren();
-    for(const c of progress.challenges){const row=document.createElement('div');row.className='challenge-row';const label=document.createElement('span');label.textContent=(c.unlocked?'✓ ':'')+c.name;const count=document.createElement('strong');count.textContent=c.unlocked?'已解锁':`${Math.floor(c.value)} / ${c.target}`;const detail=document.createElement('small');detail.textContent=c.description+' → '+(progress.trails.find(t=>t.id===c.reward)?.name||'新余迹');const track=document.createElement('div');track.className='challenge-track';const fill=document.createElement('i');fill.style.width=`${clamp(c.value/c.target*100,0,100)}%`;track.append(fill);row.append(label,count,detail,track);holder.append(row);}
+    for(const c of progress.challenges){const row=document.createElement('div');row.className='challenge-row';const label=document.createElement('span');label.textContent=(c.unlocked?'✓ ':'')+c.name;const count=document.createElement('strong');count.textContent=c.unlocked?'已解锁':`${Math.floor(c.value)} / ${c.target}`;const detail=document.createElement('small');detail.textContent=c.description+' → '+(progress.trails.find(t=>t.id===c.reward)?.name||'新拖尾');const track=document.createElement('div');track.className='challenge-track';const fill=document.createElement('i');fill.style.width=`${clamp(c.value/c.target*100,0,100)}%`;track.append(fill);row.append(label,count,detail,track);holder.append(row);}
     const select=$('trailSelect');select.replaceChildren();for(const trail of progress.trails){const opt=document.createElement('option');opt.value=trail.id;opt.textContent=trail.name+(trail.unlocked?'':' · 未解锁');opt.disabled=!trail.unlocked;select.append(opt);}select.value=progress.selectedTrail;
   }
 
@@ -173,14 +173,14 @@
     $('hpFill').style.background=p.hp/p.maxHp<.3?C.red:C.lime;
     $('levelText').textContent=`LV. ${String(p.level).padStart(2,'0')}`;$('xpFill').style.width=`${clamp(p.xp/p.xpNext*100,0,100)}%`;
     $('clockText').innerHTML=`${timeText(s.time)} <small>/ ${s.time>=360?'08:00':'06:00'}</small>`;
-    $('phaseText').textContent=s.time>=360?'摧毁最终核心':`第 ${s.wave||1} 波 · ${s.wavePhase==='recovery'?'回收 / 喘息':'怪潮进攻'}`;
-    $('waveHint').textContent=s.time>=360?'击碎核心才能通关':s.wavePhase==='recovery'?`${Math.ceil(s.waveRemaining||0)}s 后下一波 · 拾取能量`:`${Math.ceil(s.waveRemaining||0)}s 后喘息 · 精英 ${Math.max(0,Math.ceil((Math.floor(s.time/90)+1)*90-s.time))}s`;
-    $('buildName').textContent=(s.arena==='foundry'?'熔炉深井':'磁暴回廊')+' / '+(s.buildName||'初始脉冲');
+    $('phaseText').textContent=s.time>=360?'击败熔断核心':`第 ${s.wave||1} 波 · ${s.wavePhase==='recovery'?'休整':'进攻'}`;
+    $('waveHint').textContent=s.time>=360?'在 08:00 前击败核心':s.wavePhase==='recovery'?`${Math.ceil(s.waveRemaining||0)}s 后下一波 · 收集经验`:`${Math.ceil(s.waveRemaining||0)}s 后休整 · 强敌 ${Math.max(0,Math.ceil((Math.floor(s.time/90)+1)*90-s.time))}s`;
+    $('buildName').textContent=(s.arena==='foundry'?'熔炉深井':'磁暴回廊')+' / '+(s.buildName||'基础射击');
     $('timeFill').style.width=`${clamp(s.time/360*100,0,100)}%`;$('killText').textContent=String(s.kills).padStart(3,'0');
-    $('comboText').textContent=s.combo>1?`${s.combo} 连击 ${s.combo>=15?'· 连锁燃烧':''}`:'保持移动 · 拾取能量';
-    const cd=p.dashCooldown||0;$('dashText').textContent=cd>0?`充能 ${cd.toFixed(1)}s`:'冲撞就绪';
+    $('comboText').textContent=s.combo>1?`${s.combo} 连杀 ${s.combo>=15?'':''}`:'拾取经验升级';
+    const cd=p.dashCooldown||0;$('dashText').textContent=cd>0?`冷却 ${cd.toFixed(1)}s`:'冲刺就绪';
     $('dashFill').style.height=`${clamp((1-cd/(p.stats.dashCooldown||3))*100,0,100)}%`;
-    $('dashButton').style.opacity=cd>0?'.5':'1';$('dashButton').querySelector('small').textContent=cd>0?`${cd.toFixed(1)}s`:'闪避';
+    $('dashButton').style.opacity=cd>0?'.5':'1';$('dashButton').querySelector('small').textContent=cd>0?`${cd.toFixed(1)}s`:'冲刺';
     const boss=s.boss&&s.boss.hp>0?s.boss:null;$('bossHud').hidden=!boss||!active;if(boss)$('bossFill').style.width=`${clamp(boss.hp/boss.maxHp*100,0,100)}%`;
     $('announcement').textContent=s.eventText||'';$('announcement').style.opacity=active&&s.eventTimer>0?'1':'0';
     const buildKey=JSON.stringify(s.upgrades);
@@ -191,7 +191,7 @@
         const button=document.createElement('button');button.className='upgrade-card';button.type='button';
         const symbol=document.createElement('span');symbol.className='card-symbol';symbol.textContent=symbols[choice.id]||'✦';
         const key=document.createElement('span');key.className='card-key';key.textContent=String(index+1);
-        const tag=document.createElement('span');tag.className='card-tag';tag.textContent=choice.tag||'回路升级';
+        const tag=document.createElement('span');tag.className='card-tag';tag.textContent=choice.tag||'升级';
         const title=document.createElement('h3');title.textContent=choice.name;
         const desc=document.createElement('p');desc.textContent=choice.description;
         const level=document.createElement('span');level.className='card-level';level.textContent=`等级 ${(choice.level??(s.upgrades[choice.id]||0))+1} / ${choice.maxLevel||5}  ↗`;
@@ -199,8 +199,8 @@
       });cards.querySelector('button')?.focus({preventScroll:true});}
     }
   }
-  function renderBuild(container){container.replaceChildren();const entries=Object.entries(game.state.upgrades||{}).filter(([,v])=>v>0);if(!entries.length){const chip=document.createElement('span');chip.className='build-chip';chip.textContent='初始脉冲 · 自动开火';container.append(chip);}for(const [id,level]of entries){const chip=document.createElement('span');chip.className='build-chip';chip.textContent=`${symbols[id]||'·'} ${names[id]||id} `;const b=document.createElement('b');b.textContent=`${level}`;chip.append(b);container.append(chip);}}
-  function renderResult(){const s=game.state,win=s.mode==='won';$('resultKicker').textContent=win?'CORE SHATTERED / 核心已击碎':'SIGNAL LOST / 本次信号中断';$('resultTitle').innerHTML=win?'整片废墟，为你点亮<span>.</span>':'余烬，还没熄灭<span>.</span>';$('resultDescription').textContent=win?`${s.buildName||'你的构筑'}击碎了核心。本局冲撞清除 ${s.dashKills||0} 个敌人。`:s.time>=479?'最终核心仍在运转，八分钟能源耗尽。下次试试贴近核心的散射或环刃。':`${s.buildName||'初始回路'} · 冲撞清除 ${s.dashKills||0} 个敌人。预警亮起时，冲出危险区域。`;$('resultTime').textContent=timeText(s.time);$('resultKills').textContent=s.kills;$('resultCombo').textContent=s.maxCombo||s.combo||0;renderBuild($('resultBuild'));const recorded=progressStore?.recordRun({runId,kills:s.kills,time:s.time,maxCombo:s.maxCombo||0,mode:s.mode,arena:s.arena});if(recorded){progress=recorded.progress;const unlocked=recorded.newlyUnlocked;const next=progress.challenges.find(c=>!c.unlocked);$('resultChallenge').textContent=unlocked.length?'新余迹解锁：'+unlocked.map(c=>progress.trails.find(t=>t.id===c.reward)?.name||c.name).join(' / '):next?`下一个目标 · ${next.description}（${Math.floor(next.value)} / ${next.target}）`:`挑战已完成 · 当前最高连击 ${progress.bestCombo}，换一个战场试试。`;}}
+  function renderBuild(container){container.replaceChildren();const entries=Object.entries(game.state.upgrades||{}).filter(([,v])=>v>0);if(!entries.length){const chip=document.createElement('span');chip.className='build-chip';chip.textContent='基础射击 · 自动开火';container.append(chip);}for(const [id,level]of entries){const chip=document.createElement('span');chip.className='build-chip';chip.textContent=`${symbols[id]||'·'} ${names[id]||id} `;const b=document.createElement('b');b.textContent=`${level}`;chip.append(b);container.append(chip);}}
+  function renderResult(){const s=game.state,win=s.mode==='won';$('resultKicker').textContent=win?'核心已击败':'挑战结束';$('resultTitle').innerHTML=win?'胜利<span>.</span>':'挑战失败<span>.</span>';$('resultDescription').textContent=win?`${s.buildName||'基础射击'} · 冲刺击败 ${s.dashKills||0} 个敌人。`:s.time>=479?'本局结束，核心尚未被击败。':`${s.buildName||'基础射击'} · 冲刺击败 ${s.dashKills||0} 个敌人。`;$('resultTime').textContent=timeText(s.time);$('resultKills').textContent=s.kills;$('resultCombo').textContent=s.maxCombo||s.combo||0;renderBuild($('resultBuild'));const recorded=progressStore?.recordRun({runId,kills:s.kills,time:s.time,maxCombo:s.maxCombo||0,mode:s.mode,arena:s.arena});if(recorded){progress=recorded.progress;const unlocked=recorded.newlyUnlocked;const next=progress.challenges.find(c=>!c.unlocked);$('resultChallenge').textContent=unlocked.length?'已解锁拖尾：'+unlocked.map(c=>progress.trails.find(t=>t.id===c.reward)?.name||c.name).join(' / '):next?`未完成挑战 · ${next.description}（${Math.floor(next.value)} / ${next.target}）`:`挑战已全部完成 · 最高连杀 ${progress.bestCombo}。`;}}
 
   function polygon(x,y,r,sides,angle=0){ctx.beginPath();for(let i=0;i<sides;i++){const a=angle+i*Math.PI*2/sides;i?ctx.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r):ctx.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);}ctx.closePath();}
   function circle(x,y,r,color){if(r<=0)return;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
@@ -265,7 +265,7 @@
     ctx.fillStyle=`rgba(255,${h.type==='vent'?106:168},77,${alpha})`;ctx.strokeStyle=warning?'#ffbc6bdd':'#fff0bd';ctx.lineWidth=warning?2:3;
     if(h.type==='lane'){ctx.fillRect(h.x-h.w/2,h.y-h.h/2,h.w,h.h);ctx.strokeRect(h.x-h.w/2,h.y-h.h/2,h.w,h.h);if(!warning){const a=h.w>h.h;line(h.x-(a?h.w/2:0),h.y-(a?0:h.h/2),h.x+(a?h.w/2:0),h.y+(a?0:h.h/2),'#fff6b8',5);}}
     else{ctx.beginPath();ctx.arc(h.x,h.y,h.r,0,Math.PI*2);ctx.fill();ctx.stroke();if(warning){ring(h.x,h.y,h.r*clamp(1-h.life/h.maxLife,.1,1),'#ffce8f99',2);}else{ring(h.x,h.y,h.r*.6,'#ffd4a1',3);}}
-    ctx.fillStyle=warning?'#ffd5a2':'#fff4d5';ctx.font='bold 11px sans-serif';ctx.textAlign='center';const y=clamp(h.y,camera.y-height/(2*zoom)+210,camera.y+height/(2*zoom)-140);ctx.fillText(warning?(h.type==='vent'?'热浪预警':'电击预警'):'危险',clamp(h.x,camera.x-width/(2*zoom)+80,camera.x+width/(2*zoom)-80),y-10);
+    ctx.fillStyle=warning?'#ffd5a2':'#fff4d5';ctx.font='bold 11px sans-serif';ctx.textAlign='center';const y=clamp(h.y,camera.y-height/(2*zoom)+210,camera.y+height/(2*zoom)-140);ctx.fillText(warning?(h.type==='vent'?'喷火预警':'电击预警'):'危险',clamp(h.x,camera.x-width/(2*zoom)+80,camera.x+width/(2*zoom)-80),y-10);
   }
   function drawEnemy(e,t){
     const color=e.type==='runner'?C.orange:e.type==='tank'?'#b19add':e.type==='shooter'?'#f0b86b':e.type==='elite'?C.red:e.type==='boss'?'#ff8368':'#f29c8f';

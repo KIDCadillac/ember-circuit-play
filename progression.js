@@ -9,15 +9,15 @@
   const VERSION = 2;
   const RECENT_RUN_LIMIT = 20;
   const CHALLENGES = [
-    { id: 'clear100', name: '清场行家', description: '任意一局击败 100 名敌人', field: 'bestKills', target: 100, reward: 'arc' },
-    { id: 'reach180', name: '余烬不熄', description: '任意一局生存 180 秒', field: 'bestTime', target: 180, reward: 'ember' },
-    { id: 'beatboss', name: '破晓时刻', description: '任意战场击败最终核心', field: 'wins', target: 1, reward: 'dawn' }
+    { id: 'clear100', name: '清场行家', description: '单局击败 100 个敌人', field: 'bestKills', target: 100, reward: 'arc' },
+    { id: 'reach180', name: '余烬不熄', description: '单局生存 180 秒', field: 'bestTime', target: 180, reward: 'ember' },
+    { id: 'beatboss', name: '破晓时刻', description: '击败任意战场的熔断核心', field: 'wins', target: 1, reward: 'dawn' }
   ];
   const TRAILS = [
-    { id: 'default', name: '初始余迹', color: '#93ffe2' },
-    { id: 'arc', name: '电弧余迹', color: '#42e8d1' },
-    { id: 'ember', name: '熔心余迹', color: '#ff9853' },
-    { id: 'dawn', name: '破晓余迹', color: '#fff0bb' }
+    { id: 'default', name: '默认拖尾', color: '#93ffe2' },
+    { id: 'arc', name: '电弧拖尾', color: '#42e8d1' },
+    { id: 'ember', name: '熔心拖尾', color: '#ff9853' },
+    { id: 'dawn', name: '破晓拖尾', color: '#fff0bb' }
   ];
 
   function number(value, integer) {
